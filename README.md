@@ -5,7 +5,7 @@ My personal portfolio website built with Next.js
 ## Tech Stack
 
 - Next.js 15
-- React 19
+- React 18
 - TypeScript
 - Tailwind CSS
 - Framer Motion
