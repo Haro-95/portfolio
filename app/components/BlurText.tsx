@@ -92,7 +92,10 @@ const BlurText = ({
         }
         : animationFrom || defaultFrom,
       delay: i * delay,
-      config: { easing },
+      config: { 
+        duration: 500,
+        easing: (t: number) => t, // Use a simple linear easing as fallback
+      },
       reset: alwaysAnimate,
     }))
   );

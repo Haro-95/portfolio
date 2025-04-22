@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import SplitText from './SplitText';
 import Typewriter from './Typewriter';
 
