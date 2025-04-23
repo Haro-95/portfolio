@@ -1,15 +1,16 @@
 "use client";
 
-import { useRef, useState, useEffect, lazy, Suspense } from "react";
+import { useRef, useState, useEffect, lazy, Suspense, FormEvent } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import BlurText from "./components/BlurText";
 import SplitText from "./components/SplitText";
-import RotatingText, { RotatingTextRef } from "./components/RotatingText";
+import RotatingText from "./components/RotatingText";
 import AnimatedBackground from "./components/AnimatedBackground";
 import ParticleEffect from "./components/ParticleEffect";
 import SkillsSection from "./components/SkillsSection";
+import emailjs from '@emailjs/browser';
 
 // Critical element that was identified as LCP
 const LCPParagraph = ({ children, className }: { children: React.ReactNode; className: string }) => {
@@ -73,33 +74,72 @@ const projects = [
 ];
 
 export default function Home() {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [shouldAnimateHero, setShouldAnimateHero] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
+  const [shouldAnimateHero, setShouldAnimateHero] = useState(true);
   const [showBackgrounds, setShowBackgrounds] = useState(false);
-  const rotatingTextRef = useRef<RotatingTextRef>(null);
+  const rotatingTextRef = useRef<any>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [formStatus, setFormStatus] = useState({ 
+    submitting: false, 
+    success: false, 
+    error: false,
+    message: ''
+  });
   
   // Stagger animations to improve performance
   useEffect(() => {
-    setIsLoaded(true);
+    // Load background effects after a small delay
+    const bgTimer = setTimeout(() => {
+      setShowBackgrounds(true);
+    }, 300);
     
-    // Prioritize rendering the LCP element
-    const timer = setTimeout(() => {
-      setShouldAnimateHero(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
+    return () => clearTimeout(bgTimer);
   }, []);
   
-  // Load background effects after initial render
+  // Clear form status message after delay
   useEffect(() => {
-    if (isLoaded) {
+    if (formStatus.message) {
       const timer = setTimeout(() => {
-        setShowBackgrounds(true);
-      }, 300);
+        setFormStatus(prev => ({ ...prev, message: '' }));
+      }, 5000); // 5 seconds
       
       return () => clearTimeout(timer);
     }
-  }, [isLoaded]);
+  }, [formStatus.message]);
+
+  // Handle form submission
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormStatus({ submitting: true, success: false, error: false, message: '' });
+
+    if (!formRef.current) return;
+
+    // EmailJS configuration with environment variables
+    emailjs.sendForm(
+      process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
+      process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
+      formRef.current,
+      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
+    )
+      .then((result) => {
+        setFormStatus({
+          submitting: false,
+          success: true,
+          error: false,
+          message: 'Message sent successfully!'
+        });
+        // Clear form
+        formRef.current?.reset();
+      }, (error) => {
+        setFormStatus({
+          submitting: false,
+          success: false,
+          error: true,
+          message: 'Failed to send message. Please try again.'
+        });
+        console.error('EmailJS error:', error);
+      });
+  };
 
   return (
     <div className="min-h-screen text-white">
@@ -115,7 +155,7 @@ export default function Home() {
       <header className="relative flex flex-col justify-center items-center min-h-screen px-4 md:px-8 overflow-hidden">
         {/* Preload critical content */}
         <motion.div
-          initial={{ opacity: isLoaded ? 0 : 1, y: 0 }}
+          initial={{ opacity: 0, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
           className="absolute top-6 left-6 flex items-center space-x-2 z-20"
@@ -126,22 +166,27 @@ export default function Home() {
         <div 
           className="text-center max-w-4xl mx-auto z-20 relative"
         >
-          {/* Prioritize rendering text without animation first */}
+          {/* Hero heading with improved animation */}
           <h1 
             className="text-4xl md:text-6xl font-bold mb-2 text-white"
           >
-            {shouldAnimateHero ? (
-              <BlurText
-                text="Hi, I'm Haro Abdulah"
-                className=""
-                animateBy="words"
-                delay={80}
-                alwaysAnimate={true}
-                rootMargin="-50px"
-              />
-            ) : (
-              "Hi, I'm Haro Abdulah"
-            )}
+            <BlurText
+              text="Hi, I'm Haro Abdulah"
+              className=""
+              animateBy="words"
+              delay={40}
+              direction="bottom"
+              alwaysAnimate={false}
+              rootMargin="0px"
+              animationFrom={{ 
+                filter: 'blur(4px)', 
+                opacity: 0.2, 
+                transform: 'translate3d(0,10px,0)' 
+              }}
+              animationTo={[
+                { filter: 'blur(0px)', opacity: 1, transform: 'translate3d(0,0,0)' }
+              ]}
+            />
           </h1>
 
           <div className="mt-4 mb-6">
@@ -208,9 +253,9 @@ export default function Home() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: false }}
-                className="card-gradient rounded-xl overflow-hidden hover:shadow-lg transition border border-white/10 flex flex-col h-full"
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                viewport={{ once: true, margin: "-10%" }}
+                className="card-gradient rounded-xl overflow-hidden hover:shadow-lg transition border border-white/10 flex flex-col h-full will-change-transform"
               >
                 <div className="h-48 bg-blue-900/20 relative overflow-hidden">
                   <Image
@@ -218,6 +263,7 @@ export default function Home() {
                     alt={project.title}
                     fill
                     className="object-cover hover:scale-105 transition duration-500"
+                    loading="lazy"
                   />
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
@@ -248,9 +294,9 @@ export default function Home() {
                         href={project.githubUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-sm px-3 py-1.5 bg-gray-800 text-white rounded hover:bg-gray-700 transition flex-grow text-center"
+                        className="text-sm px-3 py-1.5 bg-blue-800/50 text-white rounded hover:bg-blue-800/70 transition flex items-center justify-center"
                       >
-                        GitHub
+                        <FaGithub className="mr-1" /> Code
                       </a>
                     )}
                   </div>
@@ -324,13 +370,15 @@ export default function Home() {
             viewport={{ once: false }}
             className="card-gradient p-8 rounded-xl border border-white/10"
           >
-            <form className="space-y-6">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-1 text-gray-300">Name</label>
                   <input
                     type="text"
                     id="name"
+                    name="name"
+                    required
                     className="w-full px-4 py-2 rounded-lg bg-gray-900/50 border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -339,6 +387,8 @@ export default function Home() {
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    required
                     className="w-full px-4 py-2 rounded-lg bg-gray-900/50 border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -347,16 +397,26 @@ export default function Home() {
                 <label htmlFor="message" className="block text-sm font-medium mb-1 text-gray-300">Message</label>
                 <textarea
                   id="message"
+                  name="message"
+                  required
                   rows={5}
                   className="w-full px-4 py-2 rounded-lg bg-gray-900/50 border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
                 ></textarea>
               </div>
+              
+              {formStatus.message && (
+                <div className={`text-sm px-4 py-2 rounded ${formStatus.success ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300'}`}>
+                  {formStatus.message}
+                </div>
+              )}
+              
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition md:w-auto"
+                  disabled={formStatus.submitting}
+                  className={`bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition md:w-auto ${formStatus.submitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'}`}
                 >
-                  Send Message
+                  {formStatus.submitting ? 'Sending...' : 'Send Message'}
                 </button>
               </div>
             </form>

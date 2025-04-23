@@ -43,7 +43,7 @@ export default function SkillsSection() {
             text="What I Use"
             className="text-3xl md:text-4xl font-bold text-white"
             delay={50}
-            alwaysAnimate={true}
+            alwaysAnimate={false}
             rootMargin="-50px"
           />
         </div>
@@ -54,9 +54,12 @@ export default function SkillsSection() {
               key={index}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              viewport={{ once: false }}
-              className="card-gradient p-6 rounded-xl text-center hover:shadow-lg transition border border-white/10 hover:shadow-blue-900/10"
+              transition={{ 
+                duration: 0.3, 
+                delay: index * 0.05,  // Reduced delay 
+              }}
+              viewport={{ once: true, margin: "-10%" }} // Only animate once
+              className="card-gradient p-6 rounded-xl text-center hover:shadow-lg transition border border-white/10 hover:shadow-blue-900/10 will-change-transform"
             >
               <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-slate-800/70">
                 <skill.icon className={`w-8 h-8 ${skill.color}`} />

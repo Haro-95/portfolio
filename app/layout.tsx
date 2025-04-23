@@ -7,7 +7,12 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Haro Abdulah | Portfolio",
-  description: "Haro Abdulah's personal portfolio showcasing web development projects",
+  description: "My personal portfolio website showcasing web development projects",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  }
 };
 
 export default function RootLayout({

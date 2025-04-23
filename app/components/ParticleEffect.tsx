@@ -19,6 +19,19 @@ export default function ParticleEffect() {
   const particlesRef = useRef<Particle[]>([]);
   const frameCountRef = useRef(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Only set mounted state, defer animation init
   useEffect(() => {
@@ -27,7 +40,7 @@ export default function ParticleEffect() {
     // Defer initialization to help with LCP
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 600); // Larger delay to prioritize main content
+    }, 800); // Increased delay to prioritize main content
     
     return () => clearTimeout(timer);
   }, []);
@@ -44,8 +57,8 @@ export default function ParticleEffect() {
     // Enable alpha blending for smoother rendering
     ctx.globalCompositeOperation = 'lighter';
     
-    // Set high DPI for better rendering on high-res screens
-    const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2x for performance
+    // Set high DPI but reduce for mobile
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
     
     // Set canvas dimensions to match window size with DPI
     const setCanvasDimensions = () => {
@@ -69,21 +82,23 @@ export default function ParticleEffect() {
     
     window.addEventListener("resize", handleResize);
 
-    // Create particles - further reduced for better performance
-    const particleCount = Math.min(Math.floor(window.innerWidth / 30), 60); 
+    // Reduce particle count on mobile
+    const deviceBasedParticleCount = isMobile 
+      ? Math.min(Math.floor(window.innerWidth / 50), 30)  // Fewer particles on mobile
+      : Math.min(Math.floor(window.innerWidth / 30), 60); 
 
     // Function to create particles for dark mode
     const createParticles = () => {
       particlesRef.current = [];
       
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < deviceBasedParticleCount; i++) {
         particlesRef.current.push({
           x: Math.random() * canvas.width / dpr,
           y: Math.random() * canvas.height / dpr,
-          size: Math.random() * 2 + 0.5, // Smaller particles
-          speedX: (Math.random() - 0.5) * 0.2, // Slower movement
-          speedY: (Math.random() - 0.5) * 0.2, // Slower movement
-          opacity: Math.random() * 0.5 + 0.2, // Dark mode opacity
+          size: Math.random() * 1.5 + 0.5, // Even smaller particles
+          speedX: (Math.random() - 0.5) * (isMobile ? 0.1 : 0.2), // Slower on mobile
+          speedY: (Math.random() - 0.5) * (isMobile ? 0.1 : 0.2), // Slower on mobile
+          opacity: Math.random() * 0.4 + 0.1, // Reduced opacity
         });
       }
     };
@@ -96,8 +111,10 @@ export default function ParticleEffect() {
       
       frameCountRef.current++;
       
-      // Only update every third frame for better performance
-      if (frameCountRef.current % 3 === 0) {
+      // Skip more frames on mobile
+      const frameSkip = isMobile ? 4 : 3;
+      
+      if (frameCountRef.current % frameSkip === 0) {
         ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
       
         const particles = particlesRef.current;
@@ -107,9 +124,7 @@ export default function ParticleEffect() {
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           
-          // Set white color for dark mode
           ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
-          
           ctx.fill();
           
           // Move particles
@@ -123,8 +138,9 @@ export default function ParticleEffect() {
           if (particle.y > canvas.height / dpr) particle.y = 0;
         });
 
-        // Draw connections between nearby particles - optimized for dark mode
-        const maxConnections = 2; // Dark mode connections
+        // Draw fewer connections on mobile
+        const maxConnections = isMobile ? 1 : 2;
+        const connectionDistance = isMobile ? 60 : 80;
         
         for (let i = 0; i < particles.length; i++) {
           let connections = 0;
@@ -136,17 +152,15 @@ export default function ParticleEffect() {
             const dy = particles[i].y - particles[j].y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             
-            // Dark mode connection distance
-            const connectionDistance = 80;
-            
             if (distance < connectionDistance) {
               connections++;
               ctx.beginPath();
               
-              // White lines for dark mode
-              ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 * (1 - distance / connectionDistance)})`;
+              // Reduced opacity on mobile
+              const opacity = isMobile ? 0.08 : 0.12;
+              ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * (1 - distance / connectionDistance)})`;
               
-              ctx.lineWidth = 0.3; // Thinner lines
+              ctx.lineWidth = 0.2; // Even thinner lines 
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
               ctx.stroke();
@@ -199,19 +213,21 @@ export default function ParticleEffect() {
         observerRef.current.disconnect();
       }
     };
-  }, [isMounted, isVisible]);
+  }, [isMounted, isVisible, isMobile]);
 
-  // Only render the canvas when the component is mounted and visible
-  if (!isMounted) return null;
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 w-full h-full overflow-hidden -z-5 pointer-events-none"
-      style={{ 
-        opacity: 1,
-        display: isVisible ? 'block' : 'none' // Hide until we're ready to show
-      }}
-    />
-  );
+  // Don't render canvas on small screens for max performance
+  if (isMounted) {
+    return (
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full opacity-50 z-0 pointer-events-none"
+        style={{ 
+          display: 'block',
+          willChange: 'transform'
+        }}
+      />
+    );
+  }
+  
+  return null;
 } 

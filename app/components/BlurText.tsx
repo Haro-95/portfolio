@@ -36,6 +36,21 @@ const BlurText = ({
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLParagraphElement>(null);
   const animatedCount = useRef(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile device
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      
+      return () => window.removeEventListener('resize', checkMobile);
+    }
+  }, []);
 
   const defaultFrom =
     direction === 'top'
@@ -76,6 +91,9 @@ const BlurText = ({
     return () => observer.disconnect();
   }, [threshold, rootMargin, alwaysAnimate]);
 
+  // Adjust delay for mobile
+  const mobileAdjustedDelay = isMobile ? Math.min(delay, 40) : delay;
+
   const springs = useSprings(
     elements.length,
     elements.map((_, i) => ({
@@ -91,12 +109,12 @@ const BlurText = ({
           }
         }
         : animationFrom || defaultFrom,
-      delay: i * delay,
+      delay: i * mobileAdjustedDelay, // Use adjusted delay
       config: { 
-        duration: 500,
-        easing: (t: number) => t, // Use a simple linear easing as fallback
+        duration: isMobile ? 300 : 500, // Faster animation on mobile
+        easing: (t: number) => t, 
       },
-      reset: alwaysAnimate,
+      reset: alwaysAnimate && !isMobile, // Don't reset animations on mobile
     }))
   );
 
