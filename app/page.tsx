@@ -198,12 +198,13 @@ export default function Home() {
                   texts={[
                     "websites with React",
                     "apps with Next.js",
-                    "UIs with Tailwind",
+                    "styles with Tailwind",
+                    "scripts with Python",
                     "experiences with TypeScript"
                   ]}
                   rotationInterval={3000}
                   className="text-blue-400 text-xl md:text-2xl font-medium text-center"
-                  splitBy="characters"
+                  splitBy="character"
                   staggerDuration={0.01}
                 />
               </div>

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import SplitText from "./SplitText";
 import { FaReact } from "react-icons/fa";
-import { SiTypescript, SiNextdotjs, SiJavascript, SiTailwindcss } from "react-icons/si";
+import { SiTypescript, SiNextdotjs, SiJavascript, SiTailwindcss, SiPython } from "react-icons/si";
 
 // Define skills with icons from react-icons
 const skills = [
@@ -28,6 +28,11 @@ const skills = [
     color: "text-yellow-400"
   },
   {
+    name: "Python",
+    icon: SiPython,
+    color: "text-yellow-300"
+  },
+  {
     name: "Tailwind CSS",
     icon: SiTailwindcss,
     color: "text-cyan-500"
@@ -44,22 +49,27 @@ export default function SkillsSection() {
             className="text-3xl md:text-4xl font-bold text-white"
             delay={50}
             alwaysAnimate={false}
-            rootMargin="-50px"
+            rootMargin="-20%"
           />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           {skills.map((skill, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ 
-                duration: 0.3, 
-                delay: index * 0.05,  // Reduced delay 
+              viewport={{ 
+                once: true, 
+                margin: "-20%",
+                amount: "some" 
               }}
-              viewport={{ once: true, margin: "-10%" }} // Only animate once
-              className="card-gradient p-6 rounded-xl text-center hover:shadow-lg transition border border-white/10 hover:shadow-blue-900/10 will-change-transform"
+              transition={{ 
+                duration: 0.2,
+                delay: index * 0.1,
+                ease: "easeOut"
+              }}
+              className="card-gradient p-6 rounded-xl text-center hover:shadow-lg transition border border-white/10 hover:shadow-blue-900/10 will-change-transform w-[calc(50%-0.5rem)] md:w-[calc(33.33%-1rem)] lg:w-[calc(16.66%-1rem)]"
             >
               <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-slate-800/70">
                 <skill.icon className={`w-8 h-8 ${skill.color}`} />

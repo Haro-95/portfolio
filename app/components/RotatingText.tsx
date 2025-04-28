@@ -43,6 +43,9 @@ interface RotatingTextProps {
   onComplete?: () => void;
   ariaLabel?: string;
   motion?: any;
+  rotationInterval?: number;
+  splitBy?: 'character' | 'word' | 'line' | 'none';
+  staggerDuration?: number;
   [key: string]: any;
 }
 
@@ -219,10 +222,16 @@ const RotatingText = ({
   onPrevious, 
   onLoop, 
   onComplete, 
-  ariaLabel, 
-  motion: motionProps, 
+  ariaLabel,
+  motion: motionProps,
+  rotationInterval,
+  splitBy,
+  staggerDuration,
   ...rest 
 }: RotatingTextProps) => {
+  // Remove these props from rest to prevent them from being passed to DOM elements
+  const { rotationInterval: _, splitBy: __, staggerDuration: ___, ...domProps } = rest;
+
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const textArray = useMemo(() => {
@@ -248,7 +257,6 @@ const RotatingText = ({
     rootMargin = '0px',
     playOnce = false,
     loop = true,
-    splitBy = 'character',
     mode = 'word',
     springConfig = {},
     classNames = {},
@@ -425,7 +433,7 @@ const RotatingText = ({
       ref={containerRef} 
       className={`text-rotate${className ? ` ${className}` : ''}${classNames.root ? ` ${classNames.root}` : ''}`}
       style={{ willChange: 'transform' }}
-      {...rest}
+      {...domProps}
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -462,6 +470,9 @@ RotatingText.propTypes = {
   onComplete: PropTypes.func,
   ariaLabel: PropTypes.string,
   motion: PropTypes.object,
+  rotationInterval: PropTypes.number,
+  splitBy: PropTypes.oneOf(['character', 'word', 'line', 'none']),
+  staggerDuration: PropTypes.number,
 };
 
 export default RotatingText; 
