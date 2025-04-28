@@ -57,19 +57,29 @@ export default function SkillsSection() {
           {skills.map((skill, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0.5, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ 
                 once: true, 
-                margin: "-20%",
-                amount: "some" 
+                margin: "100px",
+                amount: 0.3
               }}
               transition={{ 
-                duration: 0.2,
-                delay: index * 0.1,
-                ease: "easeOut"
+                duration: 0.3,
+                ease: [0.25, 0.1, 0.25, 1],
+                layout: {
+                  duration: 0.3
+                }
               }}
-              className="card-gradient p-6 rounded-xl text-center hover:shadow-lg transition border border-white/10 hover:shadow-blue-900/10 will-change-transform w-[calc(50%-0.5rem)] md:w-[calc(33.33%-1rem)] lg:w-[calc(16.66%-1rem)]"
+              layout
+              className="card-gradient p-6 rounded-xl text-center hover:shadow-lg transition border border-white/10 hover:shadow-blue-900/10 w-[calc(50%-0.5rem)] md:w-[calc(33.33%-1rem)] lg:w-[calc(16.66%-1rem)]"
+              style={{
+                willChange: 'transform, opacity',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
+                WebkitTransform: 'translateZ(0)'
+              }}
             >
               <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-slate-800/70">
                 <skill.icon className={`w-8 h-8 ${skill.color}`} />
