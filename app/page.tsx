@@ -12,6 +12,11 @@ import ParticleEffect from "./components/ParticleEffect";
 import SkillsSection from "./components/SkillsSection";
 import emailjs from '@emailjs/browser';
 
+// Cloudinary loader for Next.js Image
+const cloudinaryLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
+  return `https://res.cloudinary.com/ddbmhlk94/image/upload/f_auto,q_auto,w_${width}${quality ? ",q_" + quality : ""}/${src}.jpg`;
+};
+
 // Critical element that was identified as LCP
 const LCPParagraph = ({ children, className }: { children: React.ReactNode; className: string }) => {
   return (
@@ -21,7 +26,7 @@ const LCPParagraph = ({ children, className }: { children: React.ReactNode; clas
   );
 };
 
-// Custom ProfileImage component with better control over image positioning
+// Custom ProfileImage component with Cloudinary
 const ProfileImage = () => {
   return (
     <motion.div
@@ -32,14 +37,14 @@ const ProfileImage = () => {
       className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden flex-shrink-0 border border-white/10 relative"
     >
       <Image 
-        src="/images/profile.jpg"
+        loader={cloudinaryLoader}
+        src="profile_nblnn9"
         alt="Haro Abdulah"
         width={500}
         height={500}
         className="w-full h-full object-cover"
         style={{ objectPosition: "80% center" }}
         priority
-        unoptimized={true}
       />
     </motion.div>
   );
@@ -50,7 +55,7 @@ const projects = [
   {
     title: "Toodoo App",
     description: "A modern todo application built with Next.js that helps users organize tasks effectively with a clean, user-friendly interface.",
-    image: "/images/projects/toodoo-welcome-screen.png",
+    image: "toodoo-welcome-screen_n5dzh6",
     technologies: ["TypeScript", "JavaScript", "CSS", "Next.js"],
     liveUrl: "https://toodoo-app-green.vercel.app/",
     githubUrl: "https://github.com/Haro-95/toodoo-app.git"
@@ -58,7 +63,7 @@ const projects = [
   {
     title: "Image Shrink App",
     description: "A simple app for shrinking images that helps users reduce file sizes.",
-    image: "/images/projects/image-shrink.png",
+    image: "image-shrink_c30l1h",
     technologies: ["TypeScript", "HTML", "CSS"],
     liveUrl: "https://image-shrink-psi.vercel.app/",
     githubUrl: "https://github.com/Haro-95/image-shrink.git"
@@ -66,7 +71,7 @@ const projects = [
   {
     title: "Dev-Quiz-Game",
     description: "Interactive programming language quiz game built with Next.js",
-    image: "/images/projects/dev-quiz-game.png",
+    image: "dev-quiz-game_hscreh",
     technologies: ["TypeScript", "JavaScript", "CSS", "Next.js"],
     liveUrl: "https://dev-quiz-game.vercel.app/",
     githubUrl: "https://github.com/Haro-95/dev-quiz-game.git"
@@ -238,13 +243,14 @@ export default function Home() {
       <section id="projects" className="py-20 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <SplitText
-              text="My Projects"
-              className="text-3xl md:text-4xl font-bold text-white"
-              delay={50}
-              alwaysAnimate={true}
-              rootMargin="-50px"
-            />
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              <SplitText
+                text="My Projects"
+                delay={50}
+                alwaysAnimate={true}
+                rootMargin="-50px"
+              />
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -260,6 +266,7 @@ export default function Home() {
               >
                 <div className="h-48 bg-blue-900/20 relative overflow-hidden">
                   <Image
+                    loader={cloudinaryLoader}
                     src={project.image}
                     alt={project.title}
                     fill
@@ -312,13 +319,14 @@ export default function Home() {
       <section id="about" className="py-20 px-4 md:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <SplitText
-              text="About Me"
-              className="text-3xl md:text-4xl font-bold text-white"
-              delay={50}
-              alwaysAnimate={true}
-              rootMargin="-50px"
-            />
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              <SplitText
+                text="About Me"
+                delay={50}
+                alwaysAnimate={true}
+                rootMargin="-50px"
+              />
+            </h2>
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 items-center">
@@ -355,13 +363,14 @@ export default function Home() {
       <section id="contact" className="py-20 px-4 md:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <SplitText
-              text="Get In Touch"
-              className="text-3xl md:text-4xl font-bold text-white"
-              delay={50}
-              alwaysAnimate={true}
-              rootMargin="-50px"
-            />
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              <SplitText
+                text="Get In Touch"
+                delay={50}
+                alwaysAnimate={true}
+                rootMargin="-50px"
+              />
+            </h2>
           </div>
 
           <motion.div

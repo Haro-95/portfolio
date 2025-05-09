@@ -2,22 +2,28 @@ import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 
+// Cloudinary loader for Next.js Image
+const cloudinaryLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
+  return `https://res.cloudinary.com/ddbmhlk94/image/upload/f_auto,q_auto,w_${width}${quality ? ",q_" + quality : ""}/${src}.jpg`;
+};
+
+const projects = [
+  {
+    title: 'Toodoo App',
+    image: 'toodoo-welcome-screen_n5dzh6',
+  },
+  {
+    title: 'Image Shrink App',
+    image: 'image-shrink_c30l1h',
+  },
+  {
+    title: 'Dev-Quiz-Game',
+    image: 'dev-quiz-game_hscreh',
+  },
+];
+
 const ProjectsSection = () => {
   const prefersReducedMotion = useReducedMotion();
-  const projects = [
-    {
-      title: 'Project 1',
-      image: '/path/to/project1.jpg',
-    },
-    {
-      title: 'Project 2',
-      image: '/path/to/project2.jpg',
-    },
-    {
-      title: 'Project 3',
-      image: '/path/to/project3.jpg',
-    },
-  ];
 
   // Simple animation that respects user preferences
   const animation = prefersReducedMotion
@@ -43,6 +49,7 @@ const ProjectsSection = () => {
           className="relative group overflow-hidden rounded-xl border border-white/10"
         >
           <Image
+            loader={cloudinaryLoader}
             src={project.image}
             alt={project.title}
             width={1280}
