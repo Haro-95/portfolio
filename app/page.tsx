@@ -210,6 +210,16 @@ export default function Home() {
           // Clear form
           formRef.current?.reset();
           setMessageLength(0);
+          
+          // Reset form state after 3 seconds
+          setTimeout(() => {
+            setFormStatus({
+              submitting: false,
+              success: false,
+              error: false,
+              message: ''
+            });
+          }, 3000);
         } else {
           throw new Error('Failed to send message');
         }
