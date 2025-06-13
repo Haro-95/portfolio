@@ -12,6 +12,9 @@ import ParticleEffect from "./components/ParticleEffect";
 import SkillsSection from "./components/SkillsSection";
 import emailjs from '@emailjs/browser';
 
+// Initialize EmailJS
+emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '');
+
 // Cloudinary loader for Next.js Image
 const cloudinaryLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
   return `https://res.cloudinary.com/ddbmhlk94/image/upload/f_auto,q_auto,w_${width}${quality ? ",q_" + quality : ""}/${src}.jpg`;
@@ -90,6 +93,7 @@ export default function Home() {
     error: false,
     message: ''
   });
+  const [messageLength, setMessageLength] = useState(0);
   
   // Stagger animations to improve performance
   useEffect(() => {
@@ -112,12 +116,81 @@ export default function Home() {
     }
   }, [formStatus.message]);
 
+  // Form validation functions
+  const validateName = (name: string) => {
+    return name.length >= 2 && name.length <= 50;
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  const validateMessage = (message: string) => {
+    return message.length >= 10 && message.length <= 500;
+  };
+
+  // Handle message length update
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessageLength(e.target.value.length);
+  };
+
   // Handle form submission
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setFormStatus({ submitting: true, success: false, error: false, message: '' });
-
+    
     if (!formRef.current) return;
+
+    // Check if EmailJS environment variables are set
+    if (!process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 
+        !process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 
+        !process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY) {
+      setFormStatus({
+        submitting: false,
+        success: false,
+        error: true,
+        message: 'Contact form is not properly configured. Please try again later.'
+      });
+      return;
+    }
+
+    const formData = new FormData(formRef.current);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
+
+    // Validate all fields
+    if (!validateName(name)) {
+      setFormStatus({
+        submitting: false,
+        success: false,
+        error: true,
+        message: 'Name must be between 2 and 50 characters'
+      });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setFormStatus({
+        submitting: false,
+        success: false,
+        error: true,
+        message: 'Please enter a valid email address'
+      });
+      return;
+    }
+
+    if (!validateMessage(message)) {
+      setFormStatus({
+        submitting: false,
+        success: false,
+        error: true,
+        message: 'Message must be between 10 and 500 characters'
+      });
+      return;
+    }
+
+    setFormStatus({ submitting: true, success: false, error: false, message: '' });
 
     // EmailJS configuration with environment variables
     emailjs.sendForm(
@@ -127,22 +200,28 @@ export default function Home() {
       process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
     )
       .then((result) => {
-        setFormStatus({
-          submitting: false,
-          success: true,
-          error: false,
-          message: 'Message sent successfully!'
-        });
-        // Clear form
-        formRef.current?.reset();
-      }, (error) => {
+        if (result.status === 200) {
+          setFormStatus({
+            submitting: false,
+            success: true,
+            error: false,
+            message: 'Message sent successfully!'
+          });
+          // Clear form
+          formRef.current?.reset();
+          setMessageLength(0);
+        } else {
+          throw new Error('Failed to send message');
+        }
+      })
+      .catch((error) => {
+        console.error('EmailJS error:', error);
         setFormStatus({
           submitting: false,
           success: false,
           error: true,
-          message: 'Failed to send message. Please try again.'
+          message: 'Failed to send message. Please try again later.'
         });
-        console.error('EmailJS error:', error);
       });
   };
 
@@ -383,39 +462,61 @@ export default function Home() {
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-1 text-gray-300">Name</label>
+                  <label htmlFor="name" className="block text-sm font-medium mb-1 text-gray-300">
+                    Name <span className="text-red-400">*</span>
+                  </label>
                   <input
                     type="text"
                     id="name"
                     name="name"
                     required
+                    minLength={2}
+                    maxLength={50}
+                    placeholder="John Smith"
                     className="w-full px-4 py-2 rounded-lg bg-gray-900/50 border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
+                  <div className="mt-1 flex justify-end">
+                    <span className="text-xs text-gray-400">Min 2 characters</span>
+                  </div>
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-1 text-gray-300">Email</label>
+                  <label htmlFor="email" className="block text-sm font-medium mb-1 text-gray-300">
+                    Email <span className="text-red-400">*</span>
+                  </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
                     required
+                    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                    placeholder="Enter your email address"
                     className="w-full px-4 py-2 rounded-lg bg-gray-900/50 border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
+              
               <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-1 text-gray-300">Message</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-300">
+                    Message <span className="text-red-400">*</span>
+                  </label>
+                  <span className="text-xs text-gray-400">{messageLength}/500</span>
+                </div>
                 <textarea
                   id="message"
                   name="message"
                   required
+                  minLength={10}
+                  maxLength={500}
                   rows={5}
+                  placeholder="Write your message here..."
+                  onChange={handleMessageChange}
                   className="w-full px-4 py-2 rounded-lg bg-gray-900/50 border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
                 ></textarea>
               </div>
               
-              {formStatus.message && (
-                <div className={`text-sm px-4 py-2 rounded ${formStatus.success ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300'}`}>
+              {formStatus.error && (
+                <div className="text-sm px-4 py-2 rounded bg-red-900/50 text-red-300 border border-red-900">
                   {formStatus.message}
                 </div>
               )}
@@ -423,10 +524,36 @@ export default function Home() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  disabled={formStatus.submitting}
-                  className={`bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition md:w-auto ${formStatus.submitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'}`}
+                  disabled={formStatus.submitting || formStatus.success}
+                  className={`
+                    relative px-6 py-3 rounded-lg font-medium transition-all duration-300
+                    ${formStatus.success 
+                      ? 'bg-green-600 text-white cursor-default' 
+                      : formStatus.submitting
+                        ? 'bg-blue-600/70 text-white cursor-wait'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }
+                    disabled:opacity-70 disabled:cursor-not-allowed
+                  `}
                 >
-                  {formStatus.submitting ? 'Sending...' : 'Send Message'}
+                  {formStatus.success ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Message Sent!
+                    </span>
+                  ) : formStatus.submitting ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Sending...
+                    </span>
+                  ) : (
+                    'Send Message'
+                  )}
                 </button>
               </div>
             </form>

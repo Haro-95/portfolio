@@ -64,7 +64,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <meta name="google-site-verification" content="googlec0dbe5f20e014772" />
+        <meta name="google-site-verification" content="Dc2eFhSEKDVxLOwdLQln5Ad8e1IT8XlfUPltJb6MD-0" />
         <Script
           id="structured-data"
           type="application/ld+json"
