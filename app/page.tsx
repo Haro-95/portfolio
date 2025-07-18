@@ -10,13 +10,7 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 // Dynamic imports for non-critical components
 const BlurText = dynamic(() => import('./components/BlurText'), { ssr: false });
 const SplitText = dynamic(() => import('./components/SplitText'), { ssr: false });
-const RotatingText = dynamic(
-  () => import('./components/RotatingText').then(mod => ({ default: mod.default })),
-  { 
-    ssr: false,
-    loading: () => <span className="inline-block h-6 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
-  }
-);
+const RotatingText = dynamic(() => import('./components/RotatingTextWrapper'), { ssr: false });
 const AnimatedBackground = dynamic(() => import('./components/AnimatedBackground'), { ssr: false });
 const ParticleEffect = dynamic(() => import('./components/ParticleEffect'), { 
   ssr: false,
