@@ -1,15 +1,29 @@
 "use client";
 
-import { useRef, useState, useEffect, lazy, Suspense, FormEvent } from "react";
+import { useRef, useState, useEffect, lazy, Suspense, FormEvent, startTransition } from "react";
+import dynamic from 'next/dynamic';
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+const m = motion; // Alias for motion to fix TypeScript errors
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import BlurText from "./components/BlurText";
-import SplitText from "./components/SplitText";
-import RotatingText from "./components/RotatingText";
-import AnimatedBackground from "./components/AnimatedBackground";
-import ParticleEffect from "./components/ParticleEffect";
-import SkillsSection from "./components/SkillsSection";
+
+// Dynamic imports for non-critical components
+const BlurText = dynamic(() => import('./components/BlurText'), { ssr: false });
+const SplitText = dynamic(() => import('./components/SplitText'), { ssr: false });
+const RotatingText = dynamic(
+  () => import('./components/RotatingText').then(mod => ({ default: mod.default })),
+  { 
+    ssr: false,
+    loading: () => <span className="inline-block h-6 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
+  }
+);
+const AnimatedBackground = dynamic(() => import('./components/AnimatedBackground'), { ssr: false });
+const ParticleEffect = dynamic(() => import('./components/ParticleEffect'), { 
+  ssr: false,
+  loading: () => null
+});
+const SkillsSection = dynamic(() => import('./components/SkillsSection'), { ssr: false });
+
 import emailjs from '@emailjs/browser';
 
 // Initialize EmailJS
@@ -36,7 +50,7 @@ const ProfileImage = () => {
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
-      viewport={{ once: false }}
+      viewport={{ once: true }} // Changed to once: true for better performance
       className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden flex-shrink-0 border border-white/10 relative"
     >
       <Image 
@@ -45,20 +59,28 @@ const ProfileImage = () => {
         alt="Haro Abdulah"
         width={500}
         height={500}
+        sizes="(max-width: 768px) 12rem, 16rem" // Better responsive sizing
         className="w-full h-full object-cover"
         style={{ objectPosition: "80% center" }}
-        priority
+        priority // Preload important image
+        quality={85} // Good balance between quality and size
+        loading="eager" // Load immediately
       />
     </motion.div>
   );
 };
 
-// Define your projects - replace with your actual projects
+// Define your projects with optimized image loading
 const projects = [
   {
     title: "Toodoo App",
     description: "A modern todo application built with Next.js that helps users organize tasks effectively with a clean, user-friendly interface.",
-    image: "toodoo-welcome-screen_n5dzh6",
+    image: {
+      src: "toodoo-welcome-screen_n5dzh6",
+      width: 1200,
+      height: 800,
+      sizes: "(max-width: 768px) 100vw, 50vw"
+    },
     technologies: ["TypeScript", "JavaScript", "CSS", "Next.js"],
     liveUrl: "https://toodoo-app-green.vercel.app/",
     githubUrl: "https://github.com/Haro-95/toodoo-app.git"
@@ -66,7 +88,12 @@ const projects = [
   {
     title: "Image Shrink App",
     description: "A simple app for shrinking images that helps users reduce file sizes.",
-    image: "image-shrink_c30l1h",
+    image: {
+      src: "image-shrink_c30l1h",
+      width: 1200,
+      height: 800,
+      sizes: "(max-width: 768px) 100vw, 50vw"
+    },
     technologies: ["TypeScript", "HTML", "CSS"],
     liveUrl: "https://image-shrink-psi.vercel.app/",
     githubUrl: "https://github.com/Haro-95/image-shrink.git"
@@ -74,7 +101,12 @@ const projects = [
   {
     title: "Dev-Quiz-Game",
     description: "Interactive programming language quiz game built with Next.js",
-    image: "dev-quiz-game_hscreh",
+    image: {
+      src: "dev-quiz-game_hscreh",
+      width: 1200,
+      height: 800,
+      sizes: "(max-width: 768px) 100vw, 50vw"
+    },
     technologies: ["TypeScript", "JavaScript", "CSS", "Next.js"],
     liveUrl: "https://dev-quiz-game.vercel.app/",
     githubUrl: "https://github.com/Haro-95/dev-quiz-game.git"
