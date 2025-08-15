@@ -1,7 +1,7 @@
 "use client";
 
 import { useSprings, animated } from '@react-spring/web';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 
 interface SplitTextProps {
   text?: string;
@@ -17,7 +17,7 @@ interface SplitTextProps {
   alwaysAnimate?: boolean;
 }
 
-const SplitText = ({
+const SplitTextComponent = ({
   text = '',
   className = '',
   delay = 100,
@@ -118,4 +118,4 @@ const SplitText = ({
   );
 };
 
-export default SplitText; 
+export default memo(SplitTextComponent); 
