@@ -23,11 +23,6 @@ import emailjs from '@emailjs/browser';
 // Initialize EmailJS
 emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '');
 
-// Cloudinary loader for Next.js Image
-const cloudinaryLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
-  return `https://res.cloudinary.com/ddbmhlk94/image/upload/f_auto,q_auto,w_${width}${quality ? ",q_" + quality : ""}/${src}.jpg`;
-};
-
 // Critical element that was identified as LCP
 const LCPParagraph = ({ children, className }: { children: React.ReactNode; className: string }) => {
   return (
@@ -48,17 +43,14 @@ const ProfileImage = () => {
       className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden flex-shrink-0 border border-white/10 relative"
     >
       <Image 
-        loader={cloudinaryLoader}
-        src="profile_nblnn9"
+        src="https://res.cloudinary.com/ddbmhlk94/image/upload/w_512,h_512,c_fill,g_face,f_auto,q_auto/profile_nblnn9"
         alt="Haro Abdulah"
-        width={500}
-        height={500}
-        sizes="(max-width: 768px) 12rem, 16rem" // Better responsive sizing
+        width={512}
+        height={512}
         className="w-full h-full object-cover"
         style={{ objectPosition: "80% center" }}
-        priority // Preload important image
-        quality={85} // Good balance between quality and size
-        loading="eager" // Load immediately
+        priority
+        unoptimized={true}
       />
     </motion.div>
   );
@@ -381,10 +373,10 @@ export default function Home() {
               >
                 <div className="h-48 bg-blue-900/20 relative overflow-hidden">
                   <Image
-                    loader={cloudinaryLoader}
-                    src={project.image}
+                    src={`https://res.cloudinary.com/ddbmhlk94/image/upload/${project.image.src}`}
                     alt={project.title}
                     fill
+                    sizes={project.image.sizes}
                     className="object-cover hover:scale-105 transition duration-500"
                     loading="lazy"
                   />
