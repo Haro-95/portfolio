@@ -20,7 +20,7 @@
   --input: #e2e8f0;
   --ring: #3b82f6;
   --radius: 0.5rem;
-  
+
   /* Animation speeds */
   --transition-slow: 0.7s;
   --transition-medium: 0.5s;
@@ -31,7 +31,8 @@
 
 /* Dark theme */
 .dark {
-  --background: #0f172a; /* Dark blue background */
+  --background: #0f172a;
+  /* Dark blue background */
   --foreground: #f8fafc;
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
@@ -48,12 +49,6 @@
   --ring: #3b82f6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
 * {
   scroll-behavior: smooth;
@@ -65,8 +60,8 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   overflow-x: hidden;
   position: relative;
-  transition: background-color var(--transition-slow) ease-in-out, 
-              color var(--transition-medium) ease-in-out;
+  transition: background-color var(--transition-slow) ease-in-out,
+    color var(--transition-medium) ease-in-out;
   @apply bg-slate-900;
 }
 
@@ -104,9 +99,11 @@ body {
   0% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
+
   100% {
     transform: translateY(0px);
   }
@@ -118,9 +115,12 @@ body {
 
 /* Additional animations */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.5;
   }
+
   50% {
     opacity: 0.9;
   }
@@ -130,6 +130,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -139,9 +140,11 @@ body {
   0% {
     transform: translateX(0px);
   }
+
   50% {
     transform: translateX(10px);
   }
+
   100% {
     transform: translateX(0px);
   }
@@ -182,8 +185,8 @@ body {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   transition: background-color var(--transition-medium) ease,
-              border-color var(--transition-medium) ease,
-              box-shadow var(--transition-medium) ease;
+    border-color var(--transition-medium) ease,
+    box-shadow var(--transition-medium) ease;
   will-change: transform, background-color, opacity;
   transform: translateZ(0);
 }
@@ -197,7 +200,7 @@ body {
 .light .glass {
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(203, 213, 225, 0.4);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.05),
     0 1px 3px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -226,7 +229,7 @@ body {
 }
 
 .light .bg-grid-pattern {
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(51, 65, 85, 0.07) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(51, 65, 85, 0.07) 1px, transparent 1px);
 }

@@ -59,10 +59,49 @@ const ProfileImage = () => {
 // Define your projects with optimized image loading
 const projects = [
   {
+    title: "MTG Investments",
+    description: "A professional corporate website for a property management company, featuring a clean design and intuitive navigation.",
+    image: {
+      src: "/screenshots/www.mtg-investments.com_bg.png",
+      width: 1200,
+      height: 800,
+      sizes: "(max-width: 768px) 100vw, 50vw"
+    },
+    technologies: ["TypeScript", "Tailwind CSS", "Next.js"],
+    liveUrl: "https://www.mtg-investments.com/",
+    githubUrl: ""
+  },
+  {
+    title: "Mova Media",
+    description: "A modern single-page website for a creative media agency, showcasing their services with smooth animations and elegant design.",
+    image: {
+      src: "/screenshots/mova.bg_bg_.png",
+      width: 1200,
+      height: 800,
+      sizes: "(max-width: 768px) 100vw, 50vw"
+    },
+    technologies: ["TypeScript", "Tailwind CSS", "Next.js"],
+    liveUrl: "https://mova.bg/",
+    githubUrl: ""
+  },
+  {
+    title: "Keyword-App",
+    description: "A web application for discovering trending keywords across Google, YouTube, Amazon, eBay, Etsy, and Bing platforms.",
+    image: {
+      src: "/screenshots/www.keyword-app.com_.png",
+      width: 1200,
+      height: 800,
+      sizes: "(max-width: 768px) 100vw, 50vw"
+    },
+    technologies: ["TypeScript", "Tailwind CSS", "Next.js", "NeonDB"],
+    liveUrl: "https://www.keyword-app.com/",
+    githubUrl: ""
+  },
+  {
     title: "Toodoo App",
     description: "A modern todo application built with Next.js that helps users organize tasks effectively with a clean, user-friendly interface.",
     image: {
-      src: "toodoo-welcome-screen_n5dzh6",
+      src: "/screenshots/toodoo-app-green.vercel.app_.png",
       width: 1200,
       height: 800,
       sizes: "(max-width: 768px) 100vw, 50vw"
@@ -75,7 +114,7 @@ const projects = [
     title: "Image Shrink App",
     description: "A simple app for shrinking images that helps users reduce file sizes.",
     image: {
-      src: "image-shrink_c30l1h",
+      src: "/screenshots/image-shrink-psi.vercel.app_.png",
       width: 1200,
       height: 800,
       sizes: "(max-width: 768px) 100vw, 50vw"
@@ -88,7 +127,7 @@ const projects = [
     title: "Dev-Quiz-Game",
     description: "Interactive programming language quiz game built with Next.js",
     image: {
-      src: "dev-quiz-game_hscreh",
+      src: "/screenshots/dev-quiz-game.vercel.app_.png",
       width: 1200,
       height: 800,
       sizes: "(max-width: 768px) 100vw, 50vw"
@@ -371,15 +410,15 @@ export default function Home() {
                 viewport={{ once: true, margin: "-10%" }}
                 className="card-gradient rounded-xl overflow-hidden hover:shadow-lg transition border border-white/10 flex flex-col h-full will-change-transform"
               >
-                <div className="h-48 bg-blue-900/20 relative overflow-hidden">
-                  <Image
-                    src={`https://res.cloudinary.com/ddbmhlk94/image/upload/${project.image.src}`}
-                    alt={project.title}
-                    fill
-                    sizes={project.image.sizes}
-                    className="object-cover hover:scale-105 transition duration-500"
-                    loading="lazy"
-                  />
+<div className="h-48 bg-blue-900/20 relative overflow-hidden">
+                                  <Image
+                                    src={project.image.src}
+                                    alt={project.title}
+                                    fill
+                                    sizes={project.image.sizes}
+                                    className="object-cover hover:scale-105 transition duration-500"
+                                    loading="lazy"
+                                  />
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <h3 className="text-xl font-bold mb-2 text-white">

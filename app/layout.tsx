@@ -89,24 +89,45 @@ export default function RootLayout({
               "hasPart": [
                 {
                   "@type": "CreativeWork",
+                  "name": "MTG Investments",
+                  "description": "A professional corporate website for a property management company, featuring a clean design and intuitive navigation.",
+                  "url": "https://www.mtg-investments.com/",
+                  "image": "https://www.haroab.dev/screenshots/www.mtg-investments.com_bg.png"
+                },
+                {
+                  "@type": "CreativeWork",
+                  "name": "Mova Media",
+                  "description": "A modern single-page website for a creative media agency, showcasing their services with smooth animations and elegant design.",
+                  "url": "https://mova.bg/",
+                  "image": "https://www.haroab.dev/screenshots/mova.bg_bg_.png"
+                },
+                {
+                  "@type": "CreativeWork",
+                  "name": "Keyword-App",
+                  "description": "A web application for discovering trending keywords across Google, YouTube, Amazon, eBay, Etsy, and Bing platforms.",
+                  "url": "https://www.keyword-app.com/",
+                  "image": "https://www.haroab.dev/screenshots/www.keyword-app.com_.png"
+                },
+                {
+                  "@type": "CreativeWork",
                   "name": "Toodoo App",
                   "description": "A modern todo application built with Next.js that helps users organize tasks effectively with a clean, user-friendly interface.",
                   "url": "https://toodoo-app-green.vercel.app/",
-                  "image": "https://res.cloudinary.com/ddbmhlk94/image/upload/f_auto,q_auto/toodoo-welcome-screen_n5dzh6.jpg"
+                  "image": "https://www.haroab.dev/screenshots/toodoo-app-green.vercel.app_.png"
                 },
                 {
                   "@type": "CreativeWork",
                   "name": "Image Shrink App",
                   "description": "A simple app for shrinking images that helps users reduce file sizes.",
                   "url": "https://image-shrink-psi.vercel.app/",
-                  "image": "https://res.cloudinary.com/ddbmhlk94/image/upload/f_auto,q_auto/image-shrink_c30l1h.jpg"
+                  "image": "https://www.haroab.dev/screenshots/image-shrink-psi.vercel.app_.png"
                 },
                 {
                   "@type": "CreativeWork",
                   "name": "Dev-Quiz-Game",
                   "description": "Interactive programming language quiz game built with Next.js",
                   "url": "https://dev-quiz-game.vercel.app/",
-                  "image": "https://res.cloudinary.com/ddbmhlk94/image/upload/f_auto,q_auto/dev-quiz-game_hscreh.jpg"
+                  "image": "https://www.haroab.dev/screenshots/dev-quiz-game.vercel.app_.png"
                 }
               ]
             })

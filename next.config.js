@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   experimental: {
     scrollRestoration: true,
-    optimizeCss: true, // Enable CSS optimization
     optimizePackageImports: [
       'framer-motion',
       'react-icons/fa'
