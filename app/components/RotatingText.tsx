@@ -105,7 +105,7 @@ function TextSplit({ text, mode = 'word', className = '', elementClassName = '',
   
   return (
     <span className={rootClass} role="text" aria-label={ariaLabel || text} {...rest}>
-      <span className="text-rotate-sr-only">{text}</span>
+      <span className="sr-only">{text}</span>
       {words.map((word, i) => (
         <span key={`${word}-${i}`} className={elementClass}>
           {word}
@@ -123,7 +123,7 @@ function SplitText({
   staggers = 1, 
   delay = 0, 
   className = '', 
-  srClassName = 'text-rotate-sr-only', 
+  srClassName = 'sr-only', 
   elementClassName = '', 
   ariaLabel, 
   ...rest 
@@ -242,7 +242,7 @@ const RotatingText = ({
     start = 0,
     staggerDelay = 0.025,
     staggers = 1,
-    changeDelay = 3000,
+    changeDelay = rotationInterval || 3000,
     duration = 500,
     infinite = true,
     steps = false,
@@ -252,7 +252,7 @@ const RotatingText = ({
     eraseStaggerDelay = 0.025,
     eraseStagger = 1,
     random = false,
-    useIntersectionObserver = true,
+    useIntersectionObserver = false,
     threshold = 0.5,
     rootMargin = '0px',
     playOnce = false,
@@ -448,7 +448,7 @@ const RotatingText = ({
             staggers={staggers}
             className=""
             elementClassName={classNames.splitElement || ''}
-            srClassName={classNames.srOnly || 'text-rotate-sr-only'}
+            srClassName={classNames.srOnly || 'sr-only'}
             ariaLabel={ariaLabel || currentText}
           />
         </motion.div>
